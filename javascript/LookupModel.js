@@ -18,6 +18,10 @@ LookupModel.prototype = {
   },
 
   lookupAPN: function (apn, cb) {
+    console.log("sleepstart");
+    rand = getRandomInt(5000,10000); // do not spam the county servers
+    console.log("sleep");
+ 
     var xhr = new XMLHttpRequest();
 
     console.log("model.lookupAPN() apn: " + apn);
@@ -34,7 +38,10 @@ LookupModel.prototype = {
     };
     xhr.open("POST", "https://www.acgov.org/ptax_pub_app/RealSearch.do", true);
     xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    xhr.send(params);
+
+    setTimeout(function() {
+      xhr.send(params);
+    }, rand);
   },
 
   parse_html: function (html, apn, cb) {
@@ -110,3 +117,18 @@ LookupModel.prototype = {
   },
 
 };
+
+function getRandomInt(min, max) {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+};
+
+async function sleep(ms) {
+  await sleep1(ms);
+};
+
+function sleep1(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+};
+

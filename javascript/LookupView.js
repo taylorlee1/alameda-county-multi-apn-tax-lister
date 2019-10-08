@@ -85,25 +85,26 @@ LookupView.prototype = {
   
   show: function() {
     console.log(JSON.stringify(this.model.apns));
-    this.$resultsDiv.innerHTML = "";
 
-    var newdiv = document.createElement('div');
-    this.$resultsDiv.append(newdiv);
+    var table = document.createElement('table');
+    table.setAttribute('class', 'table');
+
+    var header = table.createTHead();
+    this.generateHeader(header);
+
     for (var apn in this.model.apns) {
-      this.showAPN(newdiv, apn);
+      this.showAPN(table, apn);
     }
+
+    //this.$resultsDiv.html("");
+    this.$resultsDiv.append(table);
 
   },
 
-  showAPN: function(div, apn) {
-    var table = document.createElement('table');
-    table.setAttribute('class', 'table');
+  showAPN: function(table, apn) {
     //table.innerHTML = JSON.stringify(this.model.apns[apn]);
-    var header = table.createTHead();
-    this.generateHeader(header);
     var row = table.insertRow();
     this.generateRow(row, this.model.apns[apn]);
-    div.appendChild(table);
   },
 
   generateHeader: function(header) {
