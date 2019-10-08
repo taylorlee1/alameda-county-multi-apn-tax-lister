@@ -2,6 +2,7 @@
 var LookupView = function (model) {
   this.model = model;
   this.init();
+  this.total = 0;
 };
 
 LookupView.prototype = {
@@ -94,15 +95,37 @@ LookupView.prototype = {
 
     var sorted_keys = Object.keys(this.model.apns).sort();
     var that = this;
+    this.total = 0;
     sorted_keys.forEach(function(apn) {
     //for (var apn in this.model.apns) {
       that.showAPN(table, apn);
     });
 
+    this.addTotalFooter(table);
+
     this.$resultsDiv.html("");
     this.$resultsDiv.append(table);
 
   },
+
+  addTotalFooter: function(table) {
+    var row = table.insertRow();
+    var cell = row.insertCell();
+    var cell = row.insertCell();
+    var cell = row.insertCell();
+    var cell = row.insertCell();
+    cell.innerHTML = 'TOTAL';
+    var cell = row.insertCell();
+    cell.innerHTML = numberWithCommas(Math.round(this.total));
+
+    var cell = row.insertCell();
+    var cell = row.insertCell();
+    var cell = row.insertCell();
+    var cell = row.insertCell();
+    var cell = row.insertCell();
+    var cell = row.insertCell();
+  },
+
 
   showAPN: function(table, apn) {
     //table.innerHTML = JSON.stringify(this.model.apns[apn]);
@@ -137,5 +160,11 @@ LookupView.prototype = {
     var cell = row.insertCell(); cell.innerHTML = apn['installments']['2']['amount'];
     var cell = row.insertCell(); cell.innerHTML = apn['installments']['2']['due_date'];
     var cell = row.insertCell(); cell.innerHTML = apn['installments']['2']['paystatus'];
+
+    this.total += parseFloat(apn['current_year_totals']['total'].replace(/,/g, ''));
   },
 };
+
+function numberWithCommas(x) {
+  return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
