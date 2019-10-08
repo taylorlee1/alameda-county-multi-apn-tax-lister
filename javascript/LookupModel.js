@@ -11,15 +11,16 @@ LookupModel.prototype = {
     console.log("model.lookupAPNS() Look these up: " + apns)
 
     var that = this;
+    var count = apns.split(",").length;
     apns.split(",").forEach(function(apn) {
-      that.lookupAPN(apn.trim(), cb);
+      that.lookupAPN(apn.trim(), count, cb);
     });
 
   },
 
-  lookupAPN: function (apn, cb) {
+  lookupAPN: function (apn, count, cb) {
     console.log("sleepstart");
-    rand = getRandomInt(5000,10000); // do not spam the county servers
+    rand = getRandomInt(1000,2*count*1000); // do not spam the county servers
     console.log("sleep");
  
     var xhr = new XMLHttpRequest();
@@ -63,7 +64,7 @@ LookupModel.prototype = {
     var second_installment_json = this.parseInstallmentRow(html.querySelector('#pplresultcontent4').rows.item(5));
     //console.log("second installment: " + JSON.stringify(second_installment_json))
 
-    this.apns[apn] = {
+    this.apns[cytjson['tracer']] = {
       address: address,
       apn: apn,
       verify_apn: verify_apn,

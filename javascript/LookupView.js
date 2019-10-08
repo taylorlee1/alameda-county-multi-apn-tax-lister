@@ -92,11 +92,14 @@ LookupView.prototype = {
     var header = table.createTHead();
     this.generateHeader(header);
 
-    for (var apn in this.model.apns) {
-      this.showAPN(table, apn);
-    }
+    var sorted_keys = Object.keys(this.model.apns).sort();
+    var that = this;
+    sorted_keys.forEach(function(apn) {
+    //for (var apn in this.model.apns) {
+      that.showAPN(table, apn);
+    });
 
-    //this.$resultsDiv.html("");
+    this.$resultsDiv.html("");
     this.$resultsDiv.append(table);
 
   },
