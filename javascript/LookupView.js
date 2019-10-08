@@ -17,9 +17,10 @@ LookupView.prototype = {
 
   createChildren: function () {
     // cache the document object
-    this.$container = $('.js-container');
-    this.$lookupAPNSButton = this.$container.find('.js-lookup-apns-button');
-    this.$apnTextBox = this.$container.find('.js-apn-textbox');
+    this.$container = $('#js-container');
+    this.$lookupAPNSButton = this.$container.find('#js-lookup-apns-button');
+    this.$apnTextBox = this.$container.find('#js-apn-textbox');
+    this.$resultsDiv = this.$container.find('#js-lookup-results-container');
 
     return this;
   },
@@ -55,6 +56,7 @@ LookupView.prototype = {
 
   lookupAPNSButton: function () {
     console.log("apns: " + this.$apnTextBox.val());
+    var that = this;
     
     var count_bad_apns = this.validateAPNS();
     if ( count_bad_apns > 0 ) {
@@ -64,8 +66,15 @@ LookupView.prototype = {
       console.log("OK apns");
     }
 
-    this.model.lookupAPNS(this.$apnTextBox.val());
+    this.model.lookupAPNS(this.$apnTextBox.val(), function(err, data, response) {
+      if (err) {
+        console.error("BLEH");
+        return;
+      }
 
+     that.show();
+
+    });
 
   },
 
@@ -73,4 +82,56 @@ LookupView.prototype = {
     console.log("view.lookupAPN()");
   },
 
+  
+  show: function() {
+    console.log(JSON.stringify(this.model.apns));
+    this.$resultsDiv.innerHTML = "";
+
+    var newdiv = document.createElement('div');
+    this.$resultsDiv.append(newdiv);
+    for (var apn in this.model.apns) {
+      this.showAPN(newdiv, apn);
+    }
+
+  },
+
+  showAPN: function(div, apn) {
+    var table = document.createElement('table');
+    table.setAttribute('class', 'table');
+    //table.innerHTML = JSON.stringify(this.model.apns[apn]);
+    var header = table.createTHead();
+    this.generateHeader(header);
+    var row = table.insertRow();
+    this.generateRow(row, this.model.apns[apn]);
+    div.appendChild(table);
+  },
+
+  generateHeader: function(header) {
+    var row = header.insertRow();
+    var cell = row.insertCell(); cell.innerHTML = 'year';
+    var cell = row.insertCell(); cell.innerHTML = 'address';
+    var cell = row.insertCell(); cell.innerHTML = 'apn';
+    var cell = row.insertCell(); cell.innerHTML = 'tracer';
+    var cell = row.insertCell(); cell.innerHTML = 'total';
+    var cell = row.insertCell(); cell.innerHTML = 'inst1';
+    var cell = row.insertCell(); cell.innerHTML = 'due-date';
+    var cell = row.insertCell(); cell.innerHTML = 'status';
+    var cell = row.insertCell(); cell.innerHTML = 'inst2';
+    var cell = row.insertCell(); cell.innerHTML = 'due-date';
+    var cell = row.insertCell(); cell.innerHTML = 'status';
+  },
+
+  generateRow: function(row, apn) {
+    var cell = row.insertCell(); cell.innerHTML = apn['current_year_totals']['year'];
+    var cell = row.insertCell(); cell.innerHTML = apn['address'];
+    var cell = row.insertCell(); cell.innerHTML = apn['apn'];
+    var cell = row.insertCell(); cell.innerHTML = apn['current_year_totals']['tracer'];
+    var cell = row.insertCell(); cell.innerHTML = apn['current_year_totals']['total'];
+    var cell = row.insertCell(); cell.innerHTML = apn['installments']['1']['amount'];
+    var cell = row.insertCell(); cell.innerHTML = apn['installments']['1']['due_date'];
+    var cell = row.insertCell(); cell.innerHTML = apn['installments']['1']['paystatus'];
+    var cell = row.insertCell(); cell.innerHTML = apn['installments']['2']['amount'];
+    var cell = row.insertCell(); cell.innerHTML = apn['installments']['2']['due_date'];
+    var cell = row.insertCell(); cell.innerHTML = apn['installments']['2']['paystatus'];
+  },
 };
