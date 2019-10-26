@@ -37,12 +37,11 @@ LookupModel.prototype = {
         that.parse_html(html, apn, cb);
       }
     };
-    xhr.open("POST", "https://www.acgov.org/ptax_pub_app/RealSearch.do", true);
-    xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    var acgov_url = "https://www.acgov.org/ptax_pub_app/RealSearch.do" + "?" + params
+    xhr.open("POST", "/php/proxy.php", true);
+    xhr.setRequestHeader("X-Proxy-URL", acgov_url)
 
-    setTimeout(function() {
-      xhr.send(params);
-    }, rand);
+    xhr.send();
   },
 
   parse_html: function (html, apn, cb) {
